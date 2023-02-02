@@ -1,4 +1,3 @@
-version: '3.2'
 services:
     changedetection:
       image: ghcr.io/dgtlmoon/changedetection.io
@@ -9,7 +8,7 @@ services:
 # Configurable proxy list support, see https://github.com/dgtlmoon/changedetection.io/wiki/Proxy-configuration#proxy-list-support
 #        - ./proxies.json:/datastore/proxies.json
 
-  #    environment:
+      environment:
   #        Default listening port, can also be changed with the -p option
   #      - PORT=5000
 
@@ -26,7 +25,7 @@ services:
   #             https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.proxy
   #
   #       Alternative Playwright URL, do not use "'s or 's!
-  #      - PLAYWRIGHT_DRIVER_URL=ws://playwright-chrome:3000/?stealth=1&--disable-web-security=true
+        - PLAYWRIGHT_DRIVER_URL=ws://playwright-chrome:3000/?stealth=1&--disable-web-security=true
   #
   #       Playwright proxy settings playwright_proxy_server, playwright_proxy_bypass, playwright_proxy_username, playwright_proxy_password
   #
@@ -51,7 +50,7 @@ services:
 
       # Comment out ports: when using behind a reverse proxy , enable networks: etc.
       ports:
-        - 5000:5000
+        - 127.0.0.1:50000:5000
       restart: unless-stopped
 
      # Used for fetching pages via WebDriver+Chrome where you need Javascript support.
@@ -80,22 +79,24 @@ services:
 
      # Used for fetching pages via Playwright+Chrome where you need Javascript support.
 
-#    playwright-chrome:
-#        hostname: playwright-chrome
-#        image: browserless/chrome
-#        restart: unless-stopped
-#        environment:
-#            - SCREEN_WIDTH=1920
-#            - SCREEN_HEIGHT=1024
-#            - SCREEN_DEPTH=16
-#            - ENABLE_DEBUGGER=false
-#            - PREBOOT_CHROME=true
-#            - CONNECTION_TIMEOUT=300000
-#            - MAX_CONCURRENT_SESSIONS=10
-#            - CHROME_REFRESH_TIME=600000
-#            - DEFAULT_BLOCK_ADS=true
-#            - DEFAULT_STEALTH=true
+    playwright-chrome:
+        hostname: playwright-chrome
+        image: browserless/chrome
+        restart: unless-stopped
+        ports:
+            - 0.0.0.0:50001:3000
+        
+        environment:
+            - SCREEN_WIDTH=1920
+            - SCREEN_HEIGHT=1024
+            - SCREEN_DEPTH=16
+            - ENABLE_DEBUGGER=false
+            - PREBOOT_CHROME=true
+            - CONNECTION_TIMEOUT=300000
+            - MAX_CONCURRENT_SESSIONS=10
+            - CHROME_REFRESH_TIME=600000
+            - DEFAULT_BLOCK_ADS=true
+            - DEFAULT_STEALTH=true
 
 volumes:
   changedetection-data:
-
